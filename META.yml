@@ -1,0 +1,24 @@
+--- #YAML:1.0
+name: HTML-Latemp-GenMakeHelpers
+version: 0.1.2
+license: bsd
+distribution_type: module
+requires:
+  Class::Accessor: 0
+  File::Basename: 0
+  File::Find::Rule: 0
+  Test::More: 0
+recommends: {}
+build_requires: {}
+conflicts: {}
+provides:
+  HTML::Latemp::GenMakeHelpers:
+    file: lib/HTML/Latemp/GenMakeHelpers.pm
+    version: 0.1.2
+  HTML::Latemp::GenMakeHelpers::Base:
+    file: lib/HTML/Latemp/GenMakeHelpers.pm
+    version: 0.1.2
+  HTML::Latemp::GenMakeHelpers::HostEntry:
+    file: lib/HTML/Latemp/GenMakeHelpers.pm
+    version: 0.1.2
+generated_by: Module::Build version 0.21
