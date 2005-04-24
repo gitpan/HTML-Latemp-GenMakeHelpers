@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: HTML-Latemp-GenMakeHelpers
-version: 0.1.3
+version: 0.1.4
 license: bsd
 distribution_type: module
 requires:
@@ -14,11 +14,11 @@ conflicts: {}
 provides:
   HTML::Latemp::GenMakeHelpers:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.3
+    version: 0.1.4
   HTML::Latemp::GenMakeHelpers::Base:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.3
+    version: 0.1.4
   HTML::Latemp::GenMakeHelpers::HostEntry:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.3
+    version: 0.1.4
 generated_by: Module::Build version 0.21

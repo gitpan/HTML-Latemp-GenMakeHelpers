@@ -5,7 +5,7 @@ use warnings;
 
 use vars qw($VERSION);
 
-$VERSION = '0.1.3';
+$VERSION = '0.1.4';
 
 package HTML::Latemp::GenMakeHelpers::Base;
 
@@ -56,12 +56,14 @@ sub initialize
 
     $self->base_dir("src");
     $self->hosts(
+        [ 
         map { 
             HTML::Latemp::GenMakeHelpers::HostEntry->new(
                 %$_
             ),
         }
         @{$args{'hosts'}}
+        ]
         );
     $self->hosts_id_map(+{ map { $_->{'id'} => $_ } @{$self->hosts()}});
 }
