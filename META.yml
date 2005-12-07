@@ -1,24 +1,23 @@
---- #YAML:1.0
+---
 name: HTML-Latemp-GenMakeHelpers
-version: 0.1.4
+version: 0.1.5
+author:
+  - Shlomi Fish <shlomif@iglu.org.il>
+abstract: A Latemp Utility Module.
 license: bsd
-distribution_type: module
+resources:
+  license: http://www.opensource.org/licenses/bsd-license.php
 requires:
   Class::Accessor: 0
   File::Basename: 0
   File::Find::Rule: 0
   Test::More: 0
-recommends: {}
-build_requires: {}
-conflicts: {}
 provides:
   HTML::Latemp::GenMakeHelpers:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.4
+    version: 0.1.5
   HTML::Latemp::GenMakeHelpers::Base:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.4
   HTML::Latemp::GenMakeHelpers::HostEntry:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.4
-generated_by: Module::Build version 0.21
+generated_by: Module::Build version 0.2703
