@@ -1,6 +1,6 @@
 ---
 name: HTML-Latemp-GenMakeHelpers
-version: 0.1.7
+version: 0.1.8
 author:
   - Shlomi Fish <shlomif@iglu.org.il>
 abstract: A Latemp Utility Module.
@@ -15,12 +15,16 @@ requires:
 provides:
   HTML::Latemp::GenMakeHelpers:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.7
+    version: 0.1.8
   HTML::Latemp::GenMakeHelpers::Base:
+    file: lib/HTML/Latemp/GenMakeHelpers.pm
+  HTML::Latemp::GenMakeHelpers::Error:
+    file: lib/HTML/Latemp/GenMakeHelpers.pm
+  HTML::Latemp::GenMakeHelpers::Error::UncategorizedFile:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
   HTML::Latemp::GenMakeHelpers::HostEntry:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-generated_by: Module::Build version 0.2801
+generated_by: Module::Build version 0.2805
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2

@@ -5,7 +5,7 @@ use warnings;
 
 use vars qw($VERSION);
 
-$VERSION = '0.1.7';
+$VERSION = '0.1.8';
 
 package HTML::Latemp::GenMakeHelpers::Base;
 
@@ -36,6 +36,34 @@ sub initialize
     $self->id($args{'id'});
     $self->source_dir($args{'source_dir'});
     $self->dest_dir($args{'dest_dir'});
+}
+
+package HTML::Latemp::GenMakeHelpers::Error;
+
+use vars qw(@ISA);
+
+@ISA=(qw(HTML::Latemp::GenMakeHelpers::Base));
+
+package HTML::Latemp::GenMakeHelpers::Error::UncategorizedFile;
+
+use vars qw(@ISA);
+
+@ISA=(qw(HTML::Latemp::GenMakeHelpers::Error));
+
+__PACKAGE__->mk_accessors(qw(
+    file
+    host
+));
+
+sub initialize
+{
+    my $self = shift;
+    my $args = shift;
+
+    $self->file($args->{'file'});
+    $self->host($args->{'host'});
+
+    return 0;
 }
 
 package HTML::Latemp::GenMakeHelpers;
@@ -93,26 +121,104 @@ sub process_all
     close($file_lists_fh);
 }
 
-sub process_host
+sub _make_path
+{
+    my $self = shift;
+
+    my $host = shift;
+    my $path = shift;
+
+    return $host->source_dir(). "/".$path;
+}
+
+
+
+sub get_initial_buckets
 {
     my $self = shift;
     my $host = shift;
 
-    my $dir = $self->base_dir();
+    return
+    [
+        {
+            'name' => "IMAGES",
+            'filter' =>
+            sub 
+            { 
+                my $file = shift;
+                return ($file !~ /\.(?:tt|w)ml$/) && (-f $self->_make_path($host, $file)) 
+            },
+        },
+        {
+            'name' => "DIRS",
+            'filter' => 
+            sub 
+            {
+                my $file = shift; 
+                return (-d $self->_make_path($host, $file)) 
+            },
+        },
+        {
+            'name' => "DOCS",
+            'filter' => 
+            sub 
+            { 
+                my $file = shift;
+                return $file =~ /\.html\.wml$/; 
+            },
+            'map' => sub { my $a = shift; $a =~ s{\.wml$}{}; return $a;},
+        },
+        {
+            'name' => "TTMLS",
+            'filter' =>
+            sub 
+            { 
+                my $file = shift;
+                return $file =~ /\.ttml$/;
+            },
+            'map' => sub { my $a = shift; $a =~ s{\.ttml$}{}; return $a;},
+        },
+    ];
+}
 
-    my $source_dir_path = $host->source_dir();
-    my $make_path = sub {
-        my $path = shift;
-        return "$source_dir_path/$path";
-    };
+sub _identity
+{
+    return shift;
+}
 
-    my $file_lists_text = "";
-    my $rules_text = "";
+sub _process_bucket
+{
+    my ($self, $bucket) = @_;
+    return 
+        { 
+            %$bucket, 
+            'results' => [],
+            (
+                (!exists($bucket->{'map'})) ?
+                    ('map' => \&_identity) :
+                    ()
+            ),
+        };
+}
 
-    my @files = File::Find::Rule->in($source_dir_path);
+sub get_buckets
+{
+    my ($self, $host) = @_;
 
-    s!^$source_dir_path/!! for @files;
-    @files = (grep { $_ ne $source_dir_path } @files);
+    return 
+        [ 
+            map 
+            { $self->_process_bucket($_) } 
+            @{$self->get_initial_buckets($host)} 
+        ];
+}
+
+sub _filter_out_special_files
+{
+    my ($self, $host, $files_ref) = @_;
+
+    my @files = @$files_ref;
+
     @files = (grep { ! m{(^|/)\.svn(/|$)} } @files);
     @files = (grep { ! /~$/ } @files);
     @files = 
@@ -123,64 +229,67 @@ sub process_host
         } 
         @files
         );
-    @files = sort { $a cmp $b } @files;
 
-    my @buckets = 
-    (
-        {
-            'name' => "IMAGES",
-            'filter' => sub { (!/\.(?:tt|w)ml$/) && (-f $make_path->($_)) },
-        },
-        {
-            'name' => "DIRS",
-            'filter' => sub { (-d $make_path->($_)) },
-        },
-        {
-            'name' => "DOCS",
-            'filter' => sub { /\.html\.wml$/ },
-            'map' => sub { my $a = shift; $a =~ s{\.wml$}{}; return $a;},
-        },
-        {
-            'name' => "TTMLS",
-            'filter' => sub { /\.ttml$/ },
-            'map' => sub { my $a = shift; $a =~ s{\.ttml$}{}; return $a;},
-        },
-    );
+    return \@files;
+}
 
-    foreach (@buckets) 
-    { 
-        $_->{'results'}=[]; 
-        if (!exists($_->{'map'}))
-        {
-            $_->{'map'} = sub { return shift;};
-        }
-    }
+sub _sort_files
+{
+    my ($self, $host, $files_ref) = @_;
 
-    FILE_LOOP: foreach (@files)
+    return [ sort { $a cmp $b } @$files_ref ];
+}
+
+sub get_non_bucketed_files
+{
+    my ($self, $host) = @_;
+
+    my $source_dir_path = $host->source_dir();
+
+    my $files = [ File::Find::Rule->in($source_dir_path) ];
+
+    s!^$source_dir_path/!! for @$files;
+    $files = [grep { $_ ne $source_dir_path } @$files];
+
+    $files = $self->_filter_out_special_files($host, $files);
+
+    return $self->_sort_files($host, $files);
+}
+
+sub place_files_into_buckets
+{
+    my ($self, $host, $files, $buckets) = @_;
+
+    FILE_LOOP:
+    foreach my $f (@$files)
     {
-        for my $b (@buckets)
+        foreach my $b (@$buckets)
         {
-            if ($b->{'filter'}->())
+            if ($b->{'filter'}->($f))
             {
-                push @{$b->{'results'}}, $b->{'map'}->($_);
+                push @{$b->{'results'}}, $b->{'map'}->($f);
                 next FILE_LOOP;
             }
         }
-        die "Uncategorized file $_ - host == " . $host->id() . "!";
+        die HTML::Latemp::GenMakeHelpers::Error::UncategorizedFile->new(
+            {
+                'file' => $f,
+                'host' => $host->id(),
+            }
+        );
     }
+}
 
-    my $host_uc = uc($host->id());
-    foreach my $b (@buckets)
-    {
-        $file_lists_text .= $host_uc . "_" . $b->{'name'} . " = " . join(" ", @{$b->{'results'}}) . "\n";
-    }
-    
-    if ($host->id() ne "common")
-    {
-        my $h_dest_star = "\$(X8X_DEST)/%";
-        my $wml_path = qq{WML_LATEMP_PATH="\$\$(perl -MFile::Spec -e 'print File::Spec->rel2abs(shift)' '\$\@')"};
-        my $dest_dir = $host->dest_dir();
-        my $rules = <<"EOF";
+sub get_rules_template
+{
+    my ($self, $host) = @_;
+
+    my $h_dest_star = "\$(X8X_DEST)/%";
+    my $wml_path = qq{WML_LATEMP_PATH="\$\$(perl -MFile::Spec -e 'print File::Spec->rel2abs(shift)' '\$\@')"};
+    my $dest_dir = $host->dest_dir();
+    my $source_dir_path = $host->source_dir();
+
+    return <<"EOF";
 
 X8X_SRC_DIR = $source_dir_path
 
@@ -237,8 +346,37 @@ X8X_COMMON_DOCS_DEST = \$(patsubst %,\$(X8X_DEST)/%,\$(COMMON_DOCS))
 \$(X8X_DEST): unchanged
 	mkdir -p \$@
 	touch \$@
- 
+
 EOF
+}
+
+sub process_host
+{
+    my $self = shift;
+    my $host = shift;
+
+    my $dir = $self->base_dir();
+
+    my $source_dir_path = $host->source_dir();
+
+    my $file_lists_text = "";
+    my $rules_text = "";
+
+    my $files = $self->get_non_bucketed_files($host);
+
+    my $buckets = $self->get_buckets($host);
+
+    $self->place_files_into_buckets($host, $files, $buckets);
+
+    my $host_uc = uc($host->id());
+    foreach my $b (@$buckets)
+    {
+        $file_lists_text .= $host_uc . "_" . $b->{'name'} . " = " . join(" ", @{$b->{'results'}}) . "\n";
+    }
+    
+    if ($host->id() ne "common")
+    {
+        my $rules = $self->get_rules_template($host);
 
         $rules =~ s!X8X!$host_uc!g;
         $rules =~ s!x8x!$host->id()!ge;
