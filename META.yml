@@ -1,21 +1,25 @@
 ---
 name: HTML-Latemp-GenMakeHelpers
-version: 0.1.8
+version: 0.1.9
 author:
-  - Shlomi Fish <shlomif@iglu.org.il>
+  - 'Shlomi Fish <shlomif@iglu.org.il>'
 abstract: A Latemp Utility Module.
-license: bsd
+license: mit
 resources:
-  license: http://www.opensource.org/licenses/bsd-license.php
+  license: http://opensource.org/licenses/mit-license.php
 requires:
   Class::Accessor: 0
   File::Basename: 0
   File::Find::Rule: 0
+  base: 0
+  strict: 0
+  warnings: 0
+build_requires:
   Test::More: 0
 provides:
   HTML::Latemp::GenMakeHelpers:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0.1.8
+    version: 0.1.9
   HTML::Latemp::GenMakeHelpers::Base:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
   HTML::Latemp::GenMakeHelpers::Error:
@@ -24,7 +28,7 @@ provides:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
   HTML::Latemp::GenMakeHelpers::HostEntry:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-generated_by: Module::Build version 0.2805
+generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2

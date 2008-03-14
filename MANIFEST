@@ -1,5 +1,6 @@
 Build.PL
 Changes
+examples/shlomifish.org-gen-helpers.pl
 lib/HTML/Latemp/GenMakeHelpers.pm
 Makefile.PL
 MANIFEST
@@ -7,6 +8,8 @@ META.yml # Will be created by "make dist"
 README
 t/00-load.t
 t/01-output-basic.t
+t/pod-coverage.t
+t/pod.t
 t/sample-data/sample-site-1/alternatives/index.html.wml
 t/sample-data/sample-site-1/arch/index.html.wml
 t/sample-data/sample-site-1/docs/index.html.wml
