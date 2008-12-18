@@ -5,7 +5,7 @@ use warnings;
 
 use vars qw($VERSION);
 
-$VERSION = '0.1.9';
+$VERSION = '0.2.0';
 
 package HTML::Latemp::GenMakeHelpers::Base;
 
@@ -109,7 +109,7 @@ use vars qw(@ISA);
 use File::Find::Rule;
 use File::Basename;
 
-__PACKAGE__->mk_accessors(qw(base_dir hosts hosts_id_map));
+__PACKAGE__->mk_accessors(qw(base_dir _common_buckets hosts hosts_id_map));
 
 =head2 initialize()
 
@@ -135,6 +135,9 @@ sub initialize
         ]
         );
     $self->hosts_id_map(+{ map { $_->{'id'} => $_ } @{$self->hosts()}});
+    $self->_common_buckets({});
+
+    return;
 }
 
 sub process_all
@@ -203,6 +206,7 @@ sub get_initial_buckets
                 my $file = shift; 
                 return (-d $self->_make_path($host, $file)) 
             },
+            filter_out_common => 1,
         },
         {
             'name' => "DOCS",
@@ -331,7 +335,23 @@ sub place_files_into_buckets
         {
             if ($b->{'filter'}->($f))
             {
-                push @{$b->{'results'}}, $b->{'map'}->($f);
+                if ($host->{'id'} eq "common")
+                {
+                    $self->_common_buckets->{$b->{name}}->{$f} = 1;
+                }
+                
+                if (   ($host->{'id'} eq "common")
+                    || 
+                    (!(
+                        $b->{'filter_out_common'}
+                            &&
+                        exists($self->_common_buckets->{$b->{name}}->{$f})
+                    ))
+                )
+                {
+                    push @{$b->{'results'}}, $b->{'map'}->($f);
+                }
+
                 next FILE_LOOP;
             }
         }
@@ -387,29 +407,29 @@ X8X_COMMON_TTMLS_DEST = \$(patsubst %,\$(X8X_DEST)/%,\$(COMMON_TTMLS))
 
 X8X_COMMON_DOCS_DEST = \$(patsubst %,\$(X8X_DEST)/%,\$(COMMON_DOCS))
 
-\$(X8X_DOCS_DEST) :: $h_dest_star : \$(X8X_SRC_DIR)/%.wml \$(DOCS_COMMON_DEPS) 
+\$(X8X_DOCS_DEST) : $h_dest_star : \$(X8X_SRC_DIR)/%.wml \$(DOCS_COMMON_DEPS) 
 	 $wml_path ; ( cd \$(X8X_SRC_DIR) && wml -o "\$\${WML_LATEMP_PATH}" \$(X8X_WML_FLAGS) -DLATEMP_FILENAME=\$(patsubst $h_dest_star,%,\$(patsubst %.wml,%,\$@)) \$(patsubst \$(X8X_SRC_DIR)/%,%,\$<) )
 
-\$(X8X_TTMLS_DEST) :: $h_dest_star : \$(X8X_SRC_DIR)/%.ttml \$(TTMLS_COMMON_DEPS)
+\$(X8X_TTMLS_DEST) : $h_dest_star : \$(X8X_SRC_DIR)/%.ttml \$(TTMLS_COMMON_DEPS)
 	ttml -o \$@ \$(X8X_TTML_FLAGS) -DLATEMP_FILENAME=\$(patsubst $h_dest_star,%,\$(patsubst %.ttml,%,\$@)) \$<
 
-\$(X8X_DIRS_DEST) :: $h_dest_star : unchanged
+\$(X8X_DIRS_DEST) : $h_dest_star : unchanged
 	mkdir -p \$@
 	touch \$@
 
-\$(X8X_IMAGES_DEST) :: $h_dest_star : \$(X8X_SRC_DIR)/%
+\$(X8X_IMAGES_DEST) : $h_dest_star : \$(X8X_SRC_DIR)/%
 	cp -f \$< \$@
 
-\$(X8X_COMMON_IMAGES_DEST) :: $h_dest_star : \$(COMMON_SRC_DIR)/%
+\$(X8X_COMMON_IMAGES_DEST) : $h_dest_star : \$(COMMON_SRC_DIR)/%
 	cp -f \$< \$@
 
-\$(X8X_COMMON_TTMLS_DEST) :: $h_dest_star : \$(COMMON_SRC_DIR)/%.ttml \$(TTMLS_COMMON_DEPS)
+\$(X8X_COMMON_TTMLS_DEST) : $h_dest_star : \$(COMMON_SRC_DIR)/%.ttml \$(TTMLS_COMMON_DEPS)
 	ttml -o \$@ \$(X8X_TTML_FLAGS) -DLATEMP_FILENAME=\$(patsubst $h_dest_star,%,\$(patsubst %.ttml,%,\$@)) \$<
 
-\$(X8X_COMMON_DOCS_DEST) :: $h_dest_star : \$(COMMON_SRC_DIR)/%.wml \$(DOCS_COMMON_DEPS)
+\$(X8X_COMMON_DOCS_DEST) : $h_dest_star : \$(COMMON_SRC_DIR)/%.wml \$(DOCS_COMMON_DEPS)
 	$wml_path ; ( cd \$(COMMON_SRC_DIR) && wml -o "\$\${WML_LATEMP_PATH}" \$(X8X_WML_FLAGS) -DLATEMP_FILENAME=\$(patsubst $h_dest_star,%,\$(patsubst %.wml,%,\$@)) \$(patsubst \$(COMMON_SRC_DIR)/%,%,\$<) )
 
-\$(X8X_COMMON_DIRS_DEST)  :: $h_dest_star : unchanged
+\$(X8X_COMMON_DIRS_DEST)  : $h_dest_star : unchanged
 	mkdir -p \$@
 	touch \$@
 
