@@ -1,0 +1,67 @@
+{
+   "abstract" : "A Latemp Utility Module.",
+   "author" : [
+      "Shlomi Fish <shlomif@iglu.org.il>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.3901, CPAN::Meta::Converter version 2.120921",
+   "license" : [
+      "mit"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "HTML-Latemp-GenMakeHelpers",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.39"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Class::Accessor" : "0",
+            "File::Basename" : "0",
+            "File::Find::Rule" : "0",
+            "base" : "0",
+            "strict" : "0",
+            "warnings" : "0"
+         }
+      }
+   },
+   "provides" : {
+      "HTML::Latemp::GenMakeHelpers" : {
+         "file" : "lib/HTML/Latemp/GenMakeHelpers.pm",
+         "version" : "v0.3.0"
+      },
+      "HTML::Latemp::GenMakeHelpers::Base" : {
+         "file" : "lib/HTML/Latemp/GenMakeHelpers.pm",
+         "version" : 0
+      },
+      "HTML::Latemp::GenMakeHelpers::Error" : {
+         "file" : "lib/HTML/Latemp/GenMakeHelpers.pm",
+         "version" : 0
+      },
+      "HTML::Latemp::GenMakeHelpers::Error::UncategorizedFile" : {
+         "file" : "lib/HTML/Latemp/GenMakeHelpers.pm",
+         "version" : 0
+      },
+      "HTML::Latemp::GenMakeHelpers::HostEntry" : {
+         "file" : "lib/HTML/Latemp/GenMakeHelpers.pm",
+         "version" : 0
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://www.opensource.org/licenses/mit-license.php"
+      ]
+   },
+   "version" : "v0.3.0"
+}
