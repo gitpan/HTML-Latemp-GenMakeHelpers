@@ -1,13 +1,17 @@
 Build.PL
 Changes
-examples/shlomifish.org-gen-helpers.pl
-lib/HTML/Latemp/GenMakeHelpers.pm
-Makefile.PL
+LICENSE
 MANIFEST
+META.json
 META.yml # Will be created by "make dist"
+Makefile.PL
 README
+examples/shlomifish.org-gen-helpers.pl
+inc/Test/Run/Builder.pm
+lib/HTML/Latemp/GenMakeHelpers.pm
 t/00-load.t
 t/01-output-basic.t
+t/cpan-changes.t
 t/pod-coverage.t
 t/pod.t
 t/sample-data/sample-site-1/alternatives/index.html.wml
@@ -37,8 +41,8 @@ t/sample-data/sample-site-1/print.css
 t/sample-data/sample-site-1/site-map/index.html.wml
 t/sample-data/sample-site-1/source/index.html.wml
 t/sample-data/sample-site-1/style.css
-t/sample-data/sample-site-1/subversion/compelling_alternative.html.wml
-t/sample-data/sample-site-1/subversion/index.html.wml
 t/sample-data/sample-site-1/subversion/Subversion-Win32-Installation-Guide.txt
 t/sample-data/sample-site-1/subversion/Svn-Win32-Inst-Guide.html.wml
-META.json
+t/sample-data/sample-site-1/subversion/compelling_alternative.html.wml
+t/sample-data/sample-site-1/subversion/index.html.wml
+t/style-trailing-space.t

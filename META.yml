@@ -5,9 +5,9 @@ author:
 build_requires:
   Test::More: 0
 configure_requires:
-  Module::Build: 0.39
+  Module::Build: 0.36
 dynamic_config: 1
-generated_by: 'Module::Build version 0.3901, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Module::Build version 0.4007, CPAN::Meta::Converter version 2.132830'
 license: mit
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -16,26 +16,23 @@ name: HTML-Latemp-GenMakeHelpers
 provides:
   HTML::Latemp::GenMakeHelpers:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: v0.3.0
+    version: v0.3.1
   HTML::Latemp::GenMakeHelpers::Base:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0
   HTML::Latemp::GenMakeHelpers::Error:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0
   HTML::Latemp::GenMakeHelpers::Error::UncategorizedFile:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0
   HTML::Latemp::GenMakeHelpers::HostEntry:
     file: lib/HTML/Latemp/GenMakeHelpers.pm
-    version: 0
 requires:
   Class::Accessor: 0
   File::Basename: 0
   File::Find::Rule: 0
   base: 0
+  perl: 5.008
   strict: 0
   warnings: 0
 resources:
   license: http://www.opensource.org/licenses/mit-license.php
-version: v0.3.0
+version: v0.3.1
